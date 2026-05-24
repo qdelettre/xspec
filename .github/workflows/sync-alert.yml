@@ -1,0 +1,87 @@
+name: upstream-drift-alert
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read pinned SHA
+        id: pin
+        run: echo "sha=$(cat .upstream-sha)" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch upstream HEAD SHA
+        id: upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "sha=$(gh api repos/quint-co/quint-llm-kit/commits/main --jq .sha)" >> "$GITHUB_OUTPUT"
+
+      - name: Compute drift
+        id: drift
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PINNED: ${{ steps.pin.outputs.sha }}
+          UPSTREAM: ${{ steps.upstream.outputs.sha }}
+        run: |
+          if [ "$PINNED" = "$UPSTREAM" ]; then
+            echo "in_sync=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh api "repos/quint-co/quint-llm-kit/compare/${PINNED}...${UPSTREAM}" \
+            --jq '.files[].filename' \
+            | grep '^agentic/' > drift.txt || true
+          if [ ! -s drift.txt ]; then
+            echo "in_sync=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "in_sync=false" >> "$GITHUB_OUTPUT"
+          echo "count=$(wc -l < drift.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Close existing drift issues if back in sync
+        if: steps.drift.outputs.in_sync == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue list --label upstream-drift --state open --json number --jq '.[].number' \
+            | xargs -r -I{} gh issue close {} --comment "Back in sync (no drift detected on $(date -u +%Y-%m-%d))."
+
+      - name: Open or update drift issue
+        if: steps.drift.outputs.in_sync == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PINNED: ${{ steps.pin.outputs.sha }}
+          UPSTREAM: ${{ steps.upstream.outputs.sha }}
+          COUNT: ${{ steps.drift.outputs.count }}
+        run: |
+          SHORT_UP="${UPSTREAM:0:7}"
+          TITLE="upstream drift: ${COUNT} agentic files changed (HEAD ${SHORT_UP})"
+          BODY=$(cat <<EOF
+          Upstream \`quint-co/quint-llm-kit\` has new \`agentic/\` content since our pinned baseline.
+
+          - Pinned: \`${PINNED}\`
+          - Upstream HEAD: \`${UPSTREAM}\`
+          - Compare: https://github.com/quint-co/quint-llm-kit/compare/${PINNED}...${UPSTREAM}
+
+          ### Changed files
+          \`\`\`
+          $(cat drift.txt)
+          \`\`\`
+
+          To resolve: ask Claude to follow \`docs/SYNCING.md\`.
+          EOF
+          )
+          EXISTING=$(gh issue list --label upstream-drift --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue edit "$EXISTING" --title "$TITLE" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label upstream-drift
+          fi

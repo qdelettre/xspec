@@ -1,0 +1,22 @@
+Executable Specs
+Copyright 2026 qdelettre
+
+Unofficial. Not affiliated with Informal Systems or the Quint maintainers.
+
+This product includes content adapted from quint-llm-kit
+(https://github.com/quint-co/quint-llm-kit) licensed under Apache License 2.0.
+See LICENSE for full text.
+
+Vendored content (one-time copy, evolved independently):
+- plugins/xspec/agents/*           (from quint-llm-kit/agentic/agents)
+- plugins/xspec/commands/{spec,verify,code,refactor}/*
+                                   (from quint-llm-kit/agentic/commands)
+- plugins/xspec/references/{quint-constraints,iteration,planning,verification,
+  implementation,test-debugging,choreo-test-patterns}.md
+                                   (from quint-llm-kit/agentic/guidelines)
+- plugins/xspec/schemas/*.json     (from quint-llm-kit/agentic/schemas)
+- plugins/xspec/scripts/**         (from quint-llm-kit/agentic/scripts)
+- plugins/xspec/runtime/Dockerfile (forked from quint-llm-kit/claudecode.dockerfile)
+
+The Quint language and tooling (https://quint.sh) is developed by Informal
+Systems and contributors.

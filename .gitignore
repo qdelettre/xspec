@@ -1,0 +1,12 @@
+# Local-only design + plan docs
+docs/plans/
+
+# OS junk
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+
+# Build artifacts (Dockerfile build context only)
+node_modules/

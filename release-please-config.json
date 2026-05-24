@@ -1,0 +1,17 @@
+{
+  "packages": {
+    "plugins/xspec": {
+      "release-type": "simple",
+      "package-name": "xspec",
+      "component": "xspec",
+      "bump-minor-pre-major": true,
+      "extra-files": [
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}

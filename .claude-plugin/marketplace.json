@@ -1,0 +1,17 @@
+{
+  "name": "executable-specs",
+  "owner": {
+    "name": "qdelettre"
+  },
+  "metadata": {
+    "description": "Claude Code marketplace for executable specifications: write specs, verify invariants, debug counterexamples, drive implementation from specs. v1 backend: Quint."
+  },
+  "plugins": [
+    {
+      "name": "xspec",
+      "source": "./plugins/xspec",
+      "description": "Executable-specs plugin — write, verify, debug, and implement from machine-checkable specs. Powered by Quint inside a Dockerized runtime.",
+      "author": { "name": "qdelettre" }
+    }
+  ]
+}

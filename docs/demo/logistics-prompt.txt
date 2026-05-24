@@ -1,0 +1,14 @@
+There is a Quint spec at specs/warehouse.qnt for a warehouse workflow:
+items have multiple parts, can lose parts in storage, and can be shipped.
+The invariant `shippedIntact` says shipped items must have all their original
+parts. The spec may have a bug.
+
+Verify it by running:
+  docker exec quint-runtime quint run /workspace/specs/warehouse.qnt --invariant=shippedIntact --max-samples=500 --max-steps=20 --backend=rust
+
+If a counterexample appears, use /xspec:verify:explain-trace to narrate it.
+Then fix the bug in specs/warehouse.qnt and re-run the same command to confirm
+the invariant holds.
+
+Don't write witness specs. No insights. No commentary. Just:
+verify → narrate → fix → re-verify.

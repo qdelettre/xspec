@@ -1,0 +1,12 @@
+services:
+  quint-runtime:
+    image: quint-runtime:0.1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quint-runtime
+    volumes:
+      - ${WORKSPACE:-../../..}:/workspace
+    working_dir: /workspace
+    command: ["tail", "-f", "/dev/null"]
+    restart: unless-stopped

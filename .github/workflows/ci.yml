@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate marketplace.json
+        run: jq . .claude-plugin/marketplace.json > /dev/null
+      - name: Validate plugin.json
+        run: jq . plugins/xspec/.claude-plugin/plugin.json > /dev/null
+      - name: Check all commands have frontmatter
+        run: |
+          for f in $(find plugins/xspec/commands -name '*.md'); do
+            head -1 "$f" | grep -q '^---$' || { echo "Missing frontmatter: $f"; exit 1; }
+          done
+      - name: Check all agents have frontmatter
+        run: |
+          for f in $(find plugins/xspec/agents -name '*.md'); do
+            head -1 "$f" | grep -q '^---$' || { echo "Missing frontmatter: $f"; exit 1; }
+          done
+
+  lint-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: 'plugins/xspec/**/*.md README.md NOTICE'
+        continue-on-error: true  # advisory, not blocking, until rules settled
+
+  smoke-build-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build runtime image (no push)
+        run: |
+          docker build \
+            -t quint-runtime:ci \
+            -f plugins/xspec/runtime/Dockerfile \
+            plugins/xspec/runtime/
+      - name: Smoke test quint inside
+        run: docker run --rm quint-runtime:ci quint --version
+      - name: Smoke test LSP presence
+        run: docker run --rm quint-runtime:ci which quint-language-server
+      - name: Smoke test KB MCP server present
+        run: |
+          docker run --rm quint-runtime:ci \
+            ls /home/dev/mcp-servers/kb/dist/server.js
