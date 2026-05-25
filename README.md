@@ -1,5 +1,15 @@
 # Executable Specs
 
+[![status: experimental](https://img.shields.io/badge/status-experimental-orange)](#status)
+[![stability: alpha](https://img.shields.io/badge/stability-alpha-red)](#status)
+[![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/qdelettre)
+
+> ⚠️  **Experimental — pre-1.0.** Proof-of-concept. The plugin works in basic
+> scenarios but is not production-tested, has no SLA, no security audit, and
+> may change incompatibly between versions. Use at your own risk. See
+> [Status](#status) for what's stable and what isn't.
+
 A Claude Code marketplace plugin for executable specifications — write specs,
 verify invariants, debug counterexamples, and drive implementations from specs.
 v1 backend: [Quint](https://quint.sh), running inside a Dockerized tool sandbox.
@@ -77,6 +87,40 @@ Or invoke commands directly. See `plugins/xspec/commands/` for the full list.
 Host Claude Code orchestrates; container executes. The container ships
 [Quint](https://quint.sh) (the v1 backend). Future versions may add other
 formal-spec backends (TLA+, Alloy, Dafny) as siblings.
+
+## Status
+
+**Experimental.** Early proof-of-concept. Used in personal workflows; not
+production-validated.
+
+What works:
+- The spec → verify → counterexample → fix loop demonstrated in the demo
+- Quint runtime container builds reliably; MCP servers spawn via docker exec
+- Slash commands (`/xspec:setup`, `/xspec:spec:*`, `/xspec:verify:*`, etc.)
+  routed correctly
+
+What is NOT promised:
+- No CI tests beyond manifest lint + smoke build
+- No guarantee that vendored agents/commands/references from upstream
+  `quint-co/quint-llm-kit` work for every Quint spec idiom
+- No backwards-compatibility guarantees across versions until 1.0
+- No support for Windows hosts (Docker Desktop on macOS/Linux is the only
+  tested platform)
+- No security review of the runtime container's contents
+- No production load-testing of long verification runs
+
+Use it for:
+- Learning Quint workflows in a Claude Code session
+- Sketching specs that will eventually move to a dedicated formal-methods
+  environment
+- Personal R&D, hackathons, internal tools
+
+Don't use it for:
+- Production verification of safety-critical systems
+- Cases where you need vendor support, SLAs, or audited security guarantees
+
+See [CONTRIBUTING](./CONTRIBUTING.md) for how to engage. See
+[SECURITY](./SECURITY.md) for vulnerability reporting.
 
 ## Acknowledgments
 

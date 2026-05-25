@@ -1,0 +1,59 @@
+name: Bug report
+description: Something's broken or behaving unexpectedly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file this. `xspec` is experimental —
+        bugs are expected. The clearer the reproducer, the faster a fix lands.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what actually happened?
+      placeholder: |
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproducer
+      description: Exact commands or prompts that trigger the bug. Include the spec file content if a Quint spec is involved.
+      render: bash
+    validations:
+      required: true
+
+  - type: input
+    id: xspec-version
+    attributes:
+      label: xspec version (or commit)
+      placeholder: "v0.1.0 (or sha)"
+    validations:
+      required: true
+
+  - type: input
+    id: quint-version
+    attributes:
+      label: Quint version inside container
+      description: "Output of: docker exec quint-runtime quint --version"
+      placeholder: "0.32.0"
+
+  - type: input
+    id: host-os
+    attributes:
+      label: Host OS + Docker version
+      placeholder: "macOS 14.5 / Docker Desktop 27.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Error output, stack traces, anything from `docker logs quint-runtime` if applicable
+      render: text

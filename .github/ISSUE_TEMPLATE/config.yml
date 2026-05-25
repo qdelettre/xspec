@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/qdelettre/xspec#readme
+    about: Most setup + usage questions answered in README.
+  - name: Quint language docs
+    url: https://quint.sh
+    about: For Quint-specific syntax/semantics questions, see upstream docs.

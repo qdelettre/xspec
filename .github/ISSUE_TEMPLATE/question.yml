@@ -1,0 +1,22 @@
+name: Question
+description: Ask about usage, setup, or design
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions welcome. Check README first — install + usage + status
+        are documented there.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to accomplish? What have you tried?
