@@ -53,7 +53,6 @@ docker run -d \
   --name quint-runtime \
   -v "$WORKSPACE":/workspace \
   -w /workspace \
-  --user "$(id -u):$(id -g)" \
   quint-runtime:0.1.0 \
   tail -f /dev/null
 ```
@@ -83,4 +82,4 @@ or stay available if already wired.
 
 - Image build fails: surface the docker error, suggest checking network (npm install of @informalsystems/quint requires registry access).
 - `docker run` fails with name conflict: container exists but in unexpected state. Run `docker rm -f quint-runtime` and retry.
-- uid/gid issues on Linux: the `--user "$(id -u):$(id -g)"` flag should match host. On macOS Desktop, Docker handles uid mapping transparently.
+- File ownership on Linux bind mounts: the container runs as in-image user `dev` (uid 1000). Files written under `/workspace` from the container appear as uid 1000 on the host. On macOS (Docker Desktop / OrbStack) host-user mapping is transparent. On native Linux with a non-1000 host uid, chown the workspace if you need to edit the container's writes from the host, or align your host user with uid 1000. Do NOT pass `--user "$(id -u):$(id -g)"` to `docker run` — the MCP server binaries live under `/home/dev` (mode 0700) and become unreachable for any user other than `dev`.
