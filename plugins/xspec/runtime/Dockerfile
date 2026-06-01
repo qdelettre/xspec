@@ -35,8 +35,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Quint CLI and Quint Language Server.
 # Installed separately to ensure each package gets its full dependency tree
 # (combined installs can produce missing transitive deps like lodash).
-RUN npm install -g @informalsystems/quint && \
-	npm install -g @informalsystems/quint-language-server
+RUN npm install -g @informalsystems/quint@0.32.0 && \
+	npm install -g @informalsystems/quint-language-server@0.19.0
 
 
 ARG GO_VERSION=1.24.1
