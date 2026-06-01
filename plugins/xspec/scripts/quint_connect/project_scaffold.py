@@ -207,7 +207,7 @@ def write_template(path, **kwargs):
     with open(src_path, 'r') as f:
         src = Template(f.read())
         
-    os.makedirs(os.path.dirname(dest_path), 0o777, True)
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, 'w') as f:
         f.write(src.substitute(args))
 
