@@ -109,9 +109,13 @@ RUN if [ "$INSTALL_FOUNDRY" = "true" ]; then \
 ENV GOPATH=/home/dev/go
 ENV PATH=/usr/local/go/bin:$GOPATH/bin:/home/dev/.cargo/bin:/home/dev/.foundry/bin:$PATH
 
-# Install dependencies and compile KB server (cached unless code changes)
+# Install dependencies and compile KB server (cached unless code changes).
+# npm ci installs strictly from the committed lockfile; npm install re-resolves
+# and intermittently omits onnxruntime-node (an optional dep of @xenova/transformers),
+# which then crashes `npm run setup` below with ERR_MODULE_NOT_FOUND.
 WORKDIR /home/dev/mcp-servers/kb
-RUN npm install && \
+RUN npm ci && \
+	node -e "require.resolve('onnxruntime-node')" && \
 	npm run build
 
 # Build indices from content (only re-runs when content changes)
