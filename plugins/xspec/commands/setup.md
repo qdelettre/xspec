@@ -29,7 +29,7 @@ docker image inspect quint-runtime:0.1.0 > /dev/null 2>&1
 If absent, build it from the plugin's runtime directory:
 
 ```bash
-PLUGIN_DIR="$(find ~/.claude -type d -name quint -path '*plugins/quint*' 2>/dev/null | head -1)"
+PLUGIN_DIR="$(find ~/.claude -type d -name xspec -path '*plugins/xspec*' 2>/dev/null | head -1)"
 docker build -t quint-runtime:0.1.0 -f "$PLUGIN_DIR/runtime/Dockerfile" "$PLUGIN_DIR/runtime/"
 ```
 
