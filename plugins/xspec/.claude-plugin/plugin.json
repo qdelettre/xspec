@@ -1,6 +1,6 @@
 {
   "name": "xspec",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Orchestrate executable-spec workflows (write, verify, debug, implement) from host Claude Code via a Dockerized runtime. v1 backend: Quint.",
   "mcpServers": {
     "quint-kb": {
