@@ -46,3 +46,24 @@ See [README → First-run setup](./README.md#first-run-setup) + the
 
 If your change is in scope, opens cleanly, and the issue conversation
 agrees on it: PR will get reviewed.
+
+## Secret scanning
+
+This repo runs [gitleaks](https://github.com/gitleaks/gitleaks) to keep secrets
+out of the codebase, on two layers:
+
+- **CI (blocking):** the `Security` workflow scans every push to `main` and every
+  PR. A finding fails the check — secrets must be removed and rotated, never
+  ignored.
+- **Local pre-commit hook (optional, recommended):** scans your staged diff
+  before each commit, so a secret never reaches a commit in the first place.
+
+Enable the local hook once per clone:
+
+```bash
+brew install prek gitleaks   # or any prek install method (cargo, uv, npm, …)
+prek install                 # writes .git/hooks/pre-commit
+```
+
+[prek](https://github.com/j178/prek) is a single-binary, Python-free runner for
+the standard `.pre-commit-config.yaml`. Classic `pre-commit` also works.
